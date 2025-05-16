@@ -16,7 +16,12 @@ if __name__ == '__main__':
     # Chamando as funções com FUNC
     func = Functions(dados)
 
+    # Funções com Atrasos Médios
     func.airline_delay()
+    func.type_average_delay()
+    func.holiday_average_delay()
+
+    # Numéro de Voos por Aeronave
 
 
 
