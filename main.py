@@ -22,6 +22,9 @@ if __name__ == '__main__':
     func.holiday_average_delay()
 
     # Numéro de Voos por Aeronave
+    func.flight_numbers_by_ship()
 
+    largura_bin_at = calcular_largura_bin(dados, 'arrival_delay')
+    sns.histplot(data=dados, x='arrival_delay', kde=True ,binwidth=largura_bin_at)
 
 

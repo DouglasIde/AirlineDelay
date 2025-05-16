@@ -48,3 +48,20 @@ class Functions:
         plt.xlabel('É Feriado?')
         plt.ylabel("Atraso Médio em Minutos")
         plt.show()
+
+    # Numero de Voos por Aeronave
+    def flight_numbers_by_ship(self):
+        order = self.df['aircraft_type'].value_counts().index
+        sns.countplot(data=self.df, x='aircraft_type', order=order)
+        sns.countplot(data=self.df, x='aircraft_type')
+        plt.title("Número de voos por aeronave")
+        plt.xticks(rotation=70)
+        plt.xlabel("Tipo de Aeronave")
+        plt.ylabel("Número de Voos")
+        plt.show()
+
+    def calcular_largura_bin(self, coluna):
+        Q75, Q25 = np.percentile(self.df[coluna], [75, 25])
+        IQR = Q75 - Q25
+        largura_bin = 2 * IQR / np.power(len(self.df[coluna]), -1/3)
+        return largura_bin
