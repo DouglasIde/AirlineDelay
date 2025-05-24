@@ -17,14 +17,15 @@ if __name__ == '__main__':
     func = Functions(dados)
 
     # Funções com Atrasos Médios
-    func.airline_delay()
-    func.type_average_delay()
-    func.holiday_average_delay()
+    # func.airline_delay()
+    # func.type_average_delay()
+    # func.holiday_average_delay()
+    #
+    # # Numéro de Voos por Aeronave
+    # func.flight_numbers_by_ship()
 
-    # Numéro de Voos por Aeronave
-    func.flight_numbers_by_ship()
-
-    largura_bin_at = calcular_largura_bin(dados, 'arrival_delay')
-    sns.histplot(data=dados, x='arrival_delay', kde=True ,binwidth=largura_bin_at)
+    largura_bin_at = func.calcular_largura_bin(dados, 'arrival_time')
+    sns.histplot(data=dados, x='arrival_time', kde=True, binwidth=largura_bin_at)
+    plt.show()
 
 

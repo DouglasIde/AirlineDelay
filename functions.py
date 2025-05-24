@@ -60,8 +60,9 @@ class Functions:
         plt.ylabel("Número de Voos")
         plt.show()
 
-    def calcular_largura_bin(self, coluna):
-        Q75, Q25 = np.percentile(self.df[coluna], [75, 25])
+    # Definir automaticamente um tamanho de BIN para o histograma
+    def calcular_largura_bin(self, df, coluna):
+        Q75, Q25 = np.percentile(df[coluna].dropna(), [75, 25])
         IQR = Q75 - Q25
-        largura_bin = 2 * IQR / np.power(len(self.df[coluna]), -1/3)
+        largura_bin = 2 * IQR * np.power(len(df[coluna]), -1/3)
         return largura_bin
