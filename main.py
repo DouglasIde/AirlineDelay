@@ -28,11 +28,13 @@ if __name__ == '__main__':
     print("""
         1 - Verificar atrasos médios
         2 - Histograma Freedman-Diaconis com Bins
+        3 - Distribuição dos valores de atrasos
     """)
 
     switch = {
         1: lambda: (func.airline_delay(), func.type_average_delay(), func.holiday_average_delay()),
         2: lambda: gerar_histograma(),
+        3: lambda: func.visualizar_delay(dados)
     }
 
     user_choice = int(input("Escolha o que deseja verificar: "))

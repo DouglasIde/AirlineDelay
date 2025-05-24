@@ -5,6 +5,8 @@ import seaborn as sns
 import yellowbrick
 import matplotlib.pyplot as plt
 
+from os import linesep
+
 class Functions:
 
     def __init__(self, df):
@@ -66,3 +68,26 @@ class Functions:
         IQR = Q75 - Q25
         largura_bin = 2 * IQR * np.power(len(df[coluna]), -1/3)
         return largura_bin
+
+    def visualizar_delay(self, df, coluna='delay'):
+        mean_delay = df[coluna].mean()
+        median_delay = df[coluna].median()
+
+        fig, axes = plt.subplots(1, 2, figsize=(9, 4))
+
+        # Criando o gráfico BoxPlot
+        sns.boxplot(data=df, x=coluna, ax=axes[0])
+        axes[0].set_title('Gráfico BoxPlot')
+        axes[0].axhline(y=mean_delay, color='r', linestyle='--', label='Média')
+        axes[0].legend()
+
+        # Criando o Histograma
+        largura_bin_delay = self.calcular_largura_bin(df, coluna)
+        sns.histplot(data=df, x=coluna, ax=axes[1], kde=True, binwidth=largura_bin_delay)
+        axes[1].set_title("Histograma")
+        axes[1].axvline(x=mean_delay, color='r', linestyle='--', label='Média')
+        axes[1].axvline(x=median_delay, color='y', linestyle='--', label='Mediana')
+        axes[1].legend()
+
+        plt.tight_layout()
+        plt.show()
