@@ -63,4 +63,4 @@ def limita_vizinhos(model, estacionamentos, avioes):
             continue
         for vizinho in estacionamento.vizinhos:
             if vizinho.grande:
-                model.Add(estacionamento.recebe_aviao_grande).OnlyEnforceIf(vizinho.recebe_aviao_grande)
+                model.Add(estacionamento.recebe_aviao_grande == 1).OnlyEnforceIf(vizinho.recebe_aviao_grande)
