@@ -6,6 +6,7 @@ import yellowbrick
 import matplotlib.pyplot as plt
 
 from os import linesep
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
 class Functions:
 
@@ -91,3 +92,17 @@ class Functions:
 
         plt.tight_layout()
         plt.show()
+
+    def calcular_metricas_regressao(self, y_test, y_pred):
+        rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+        mae = mean_squared_error(y_test, y_pred)
+        r2 = r2_score(y_test, y_pred)
+
+        metricas = {
+            'Raiz do Erro Quadrático Médio': round(rmse, 4),
+            'Erro Absoluto Médio': round(mae, 4),
+            'R2 Score': round(r2, 4)
+        }
+
+        print(metricas)
+        return metricas
