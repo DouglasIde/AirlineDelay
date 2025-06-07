@@ -26,3 +26,21 @@ def resolve(solucionador, modelo, estacionamentos, avioes):
         else:
             aviao = avioes[valor - 1]
             print(f"{estacionamento} tem avião: {valor}, grande = {aviao.grande}")
+
+# Garantir que os aviões não ocupem o mesmo estacionamento
+def avioes_distintos(estacionamentos, modelo):
+    var = [estacionamento.var for estacionamento in estacionamentos]
+    modelo.AddAllDifferent(var)
+
+# Garantir que todos os aviões estacionem sem faltar nenhum
+def todo_aviao_tem_estacionar(total_de_avioes, estacionamentos, modelo):
+    vars = {}
+    for i in range(1, total_de_avioes + 1):
+        for j, estacionamento in enumerate(estacionamentos):
+            aviao_i_em_j = modelo.NewBoolVar(f'aviao_{i}_em{j}')
+            modelo.Add(estacionamento.var == i).OnlyEnforceIf(aviao_i_em_j)
+            modelo.Add(estacionamento.var != i).OnlyEnforceIf(aviao_i_em_j.Not())
+            vars[(i,j)] = aviao_i_em_j
+
+    for i in range(1, total_de_avioes + 1):
+        modelo.AddExaclyOne([vars[i,j] for j in range(len(estacionamentos))])
