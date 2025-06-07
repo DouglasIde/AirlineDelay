@@ -1,8 +1,9 @@
 from ortools.sat.python import cp_model
 
-from model.functions import avioes_distintos, todo_aviao_tem_estacionar, limita_aviao_grande_estacionamento_grande, resolve
-from model.models.aviao import Aviao
-from model.models.estacionamento import Estacionamento
+from functions import avioes_distintos, todo_aviao_tem_estacionar, limita_aviao_grande_estacionamento_grande, \
+    resolve, limita_vizinhos
+from models.aviao import Aviao
+from models.estacionamento import Estacionamento
 
 model = cp_model.CpModel()
 
@@ -20,10 +21,12 @@ estacionamentos[2].vizinhos = [estacionamentos[3]]
 
 avioes_distintos(estacionamentos, model)
 todo_aviao_tem_estacionar(total_de_avioes, estacionamentos, model)
+limita_vizinhos(model, estacionamentos, avioes)
 limita_aviao_grande_estacionamento_grande(model, estacionamentos, avioes)
 
 solucionador = cp_model.CpSolver()
 resolve(solucionador, model, estacionamentos, avioes)
+
 
 
 

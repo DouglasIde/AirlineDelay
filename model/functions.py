@@ -43,7 +43,7 @@ def todo_aviao_tem_estacionar(total_de_avioes, estacionamentos, modelo):
             vars[(i,j)] = aviao_i_em_j
 
     for i in range(1, total_de_avioes + 1):
-        modelo.AddExaclyOne([vars[i,j] for j in range(len(estacionamentos))])
+        modelo.AddExactlyOne([vars[i,j] for j in range(len(estacionamentos))])
 
 # Garantir que determinado estacionamento não receba avioões grandes
 def remover_estacionamento(modelo, var_estacionamento, avioes_grandes):
@@ -55,3 +55,12 @@ def limita_aviao_grande_estacionamento_grande(modelo, estacionamentos, avioes):
     for estacionamento in estacionamentos:
         for aviao in avioes_grandes:
             modelo.Add(estacionamento.var != aviao.k).OnlyEnforceIf(estacionamento.recebe_aviao_grande.Not())
+
+# Um estacionamento só pode receber aviões grandes se seu vizinho também puder receber aviões grandes.
+def limita_vizinhos(model, estacionamentos, avioes):
+    for estacionamento in estacionamentos:
+        if not estacionamento.grande:
+            continue
+        for vizinho in estacionamento.vizinhos:
+            if vizinho.grande:
+                model.Add(estacionamento.recebe_aviao_grande).OnlyEnforceIf(vizinho.recebe_aviao_grande)
