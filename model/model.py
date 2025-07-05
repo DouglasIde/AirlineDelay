@@ -14,7 +14,8 @@ total_de_avioes = len(avioes)
 # Se for TRUE significa que o estacionamento é grande, FALSE é que é pequeno
 estacionamentos = [Estacionamento(1, total_de_avioes, False, model, True),
                    Estacionamento(2, total_de_avioes, True, model, False),
-                   Estacionamento(3, total_de_avioes, True, model, False)]
+                   Estacionamento(3, total_de_avioes, True, model, True),
+                   Estacionamento(4, total_de_avioes, True, model, True)]
 
 estacionamentos[2].vizinhos = [estacionamentos[1]]
 
@@ -26,8 +27,10 @@ limita_aviao_grande_estacionamento_grande(model, estacionamentos, avioes)
 # Limitar os aviões que precisam de controle de passaporte
 limitar_avioes_que_requerem_passport(model, estacionamentos, avioes)
 
+penalties = prefere_avioes_com_passaporte(model, estacionamentos, avioes)
+
 solucionador = cp_model.CpSolver()
-status = resolve(solucionador, model, estacionamentos, avioes)
+status = resolve(solucionador, model, estacionamentos, avioes, penalties)
 
 print(solucionador.StatusName(status))
 

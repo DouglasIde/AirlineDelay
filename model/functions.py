@@ -12,12 +12,15 @@ def criar_estacionamento(estacionamentos, total_de_avioes, modelo):
     return vars
 
 # Resolve o modelo de otimização e exibe a alocação de aviões nos estacionamentos
-def resolve(solucionador, modelo, estacionamentos, avioes):
+def resolve(solucionador, modelo, estacionamentos, avioes, penalidades):
+    modelo.Minimize(sum(penalidades))
     status = solucionador.Solve(modelo)
     print(solucionador.StatusName(status))
     if status == cp_model.INFEASIBLE:
         print("Sem solução!!")
         return
+
+    print(f"Valor objetivo = {solucionador.ObjectiveValue()}")
     for estacionamento in estacionamentos:
         var = estacionamento.var
         valor = solucionador.Value(var)
@@ -65,14 +68,37 @@ def limita_vizinhos(model, estacionamentos, avioes):
             if vizinho.grande:
                 model.Add(estacionamento.recebe_aviao_grande == 1).OnlyEnforceIf(vizinho.recebe_aviao_grande)
 
+# Função que limita os aviões que precisam de controle de passaporte,
+# pois eles não podem ir onde não tem controle de passaporte.
 def limitar_avioes_que_requerem_passport(modelo, estacionamentos, avioes):
-    # Verifica quais aviões tem controle de passaporte
+    # Verifica quais aviões tem controle de passaporte e devolve o avião
     avioes_c_controle = [aviao for aviao in avioes if aviao.requer_controle_passport]
 
     # Verifica quais estacionamentos não tem controle de passaporte
     estacionamentos_s_controle = [estacionamento for estacionamento in estacionamentos if not estacionamento.tem_controle_passport]
 
-    # Iterando para que estacionamento sem controle não tenha avião com controle
+    # Restrição do modelo matematico do estacionamento não pode ser esse avião
     for estacionamento in estacionamentos_s_controle:
         for aviao in avioes_c_controle:
             modelo.Add(estacionamento.var != aviao.k)
+
+def prefere_avioes_com_passaporte(modelo, estacionamentos, avioes):
+    penalties = []
+    estacionamento_c_controle = [estacionamento for estacionamento in estacionamentos if estacionamento.tem_controle_passport]
+    avioes_c_controle = [aviao for aviao in avioes if aviao.requer_controle_passport]
+    avioes_s_controle = [aviao for aviao in avioes if not aviao.requer_controle_passport]
+
+    for estacionamento in estacionamento_c_controle:
+        for aviao in avioes_s_controle:
+            penalty = modelo.NewIntVar(0, 1000, f"Penalidade_{estacionamento.k}_{aviao.k}")
+
+            aviao_esta_nesse_estacionamento = modelo.NewBoolVar(f"estacionamento_{estacionamento.k}_tem_aviao: {aviao.k}")
+            modelo.Add(estacionamento.var == aviao.k).OnlyEnforceIf(aviao_esta_nesse_estacionamento)
+            modelo.Add(estacionamento.var != aviao.k).OnlyEnforceIf(aviao_esta_nesse_estacionamento.Not())
+
+            modelo.Add(penalty == 1000).OnlyEnforceIf(aviao_esta_nesse_estacionamento)
+            modelo.Add(penalty == 0).OnlyEnforceIf(aviao_esta_nesse_estacionamento.Not())
+
+            penalties.append(penalty)
+            return penalties
+
