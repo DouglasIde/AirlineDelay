@@ -1,7 +1,7 @@
 # Funções do Modelo de Aeroportos e Aviões
 from ortools.sat.python import cp_model
 
-
+variaveis_a_logar = []
 # Função que cria os estacionamentos para os aviões
 def criar_estacionamento(estacionamentos, total_de_avioes, modelo):
     vars = []
@@ -13,6 +13,7 @@ def criar_estacionamento(estacionamentos, total_de_avioes, modelo):
 
 # Resolve o modelo de otimização e exibe a alocação de aviões nos estacionamentos
 def resolve(solucionador, modelo, estacionamentos, avioes, penalidades):
+    global variaveis_a_logar
     modelo.Minimize(sum(penalidades))
     status = solucionador.Solve(modelo)
     print(solucionador.StatusName(status))
@@ -21,6 +22,10 @@ def resolve(solucionador, modelo, estacionamentos, avioes, penalidades):
         return
 
     print(f"Valor objetivo = {solucionador.ObjectiveValue()}")
+
+    for variavel in variaveis_a_logar:
+        print(f'{variavel} tem valor {solucionador.Value(variavel)}')
+
     for estacionamento in estacionamentos:
         var = estacionamento.var
         valor = solucionador.Value(var)
@@ -99,6 +104,14 @@ def prefere_avioes_com_passaporte(modelo, estacionamentos, avioes):
             modelo.Add(penalty == 1000).OnlyEnforceIf(aviao_esta_nesse_estacionamento)
             modelo.Add(penalty == 0).OnlyEnforceIf(aviao_esta_nesse_estacionamento.Not())
 
+            loga(penalty)
             penalties.append(penalty)
             return penalties
+
+# Variavel global não é boa prática,
+# Usando somente para logar e nos informar,
+# Não colocar em prod
+def loga(variavel):
+    global variaveis_a_logar
+    variaveis_a_logar.append(variavel)
 

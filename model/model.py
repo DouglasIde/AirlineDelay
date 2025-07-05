@@ -7,15 +7,15 @@ from models.estacionamento import Estacionamento
 model = cp_model.CpModel()
 
 # Se for TRUE significa que o avião é grande, FALSE é que é pequeno
-avioes = [Aviao(1, True, True), Aviao(2, False, False), Aviao(3, True, True)]
+avioes = [Aviao(1, False, False), Aviao(2, False, False), Aviao(3, False, False), Aviao(4, False, True)]
 
 total_de_avioes = len(avioes)
 
 # Se for TRUE significa que o estacionamento é grande, FALSE é que é pequeno
 estacionamentos = [Estacionamento(1, total_de_avioes, False, model, True),
-                   Estacionamento(2, total_de_avioes, True, model, False),
-                   Estacionamento(3, total_de_avioes, True, model, True),
-                   Estacionamento(4, total_de_avioes, True, model, True)]
+                   Estacionamento(2, total_de_avioes, False, model, False),
+                   Estacionamento(3, total_de_avioes, False, model, False),
+                   Estacionamento(4, total_de_avioes, False, model, False)]
 
 estacionamentos[2].vizinhos = [estacionamentos[1]]
 
