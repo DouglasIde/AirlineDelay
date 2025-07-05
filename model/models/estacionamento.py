@@ -1,5 +1,5 @@
 class Estacionamento:
-    def __init__(self, k, total_de_avioes, grande, modelo):
+    def __init__(self, k, total_de_avioes, grande, modelo, tem_controle_passport):
         # Numeração do estacionamento
         self.k = k
 
@@ -12,3 +12,5 @@ class Estacionamento:
         self.recebe_aviao_grande = modelo.NewBoolVar(f'recebe_aviao_grande_{k}')
         if not self.grande:
             modelo.Add(self.recebe_aviao_grande == 0)
+
+        self.tem_controle_passport = tem_controle_passport

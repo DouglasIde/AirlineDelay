@@ -64,3 +64,15 @@ def limita_vizinhos(model, estacionamentos, avioes):
         for vizinho in estacionamento.vizinhos:
             if vizinho.grande:
                 model.Add(estacionamento.recebe_aviao_grande == 1).OnlyEnforceIf(vizinho.recebe_aviao_grande)
+
+def limitar_avioes_que_requerem_passport(modelo, estacionamentos, avioes):
+    # Verifica quais aviões tem controle de passaporte
+    avioes_c_controle = [aviao for aviao in avioes if aviao.requer_controle_passport]
+
+    # Verifica quais estacionamentos não tem controle de passaporte
+    estacionamentos_s_controle = [estacionamento for estacionamento in estacionamentos if not estacionamento.tem_controle_passport]
+
+    # Iterando para que estacionamento sem controle não tenha avião com controle
+    for estacionamento in estacionamentos_s_controle:
+        for aviao in avioes_c_controle:
+            modelo.Add(estacionamento.var != aviao.k)
