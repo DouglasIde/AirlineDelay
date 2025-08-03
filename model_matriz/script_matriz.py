@@ -51,4 +51,17 @@ for i in range(total_avioes):
         # Se não passou a soma das variaveis é igual a 0
         modelo.Add(sum(var_aviao_estacionamento) == 0).OnlyEnforceIf(aviao_i_j.Not())
 
+# Detectar o momento que cada avião decolou
+# 1 = Está no estacionamento
+# 2 = Está decolando
+# 0 = Decolou!
+for i in range(total_avioes):
+    for j in range(total_estacionamentos):
+        for k in range(total_tempo):
+            if k > 0:
+                aviao_decolou = modelo.NewBoolVar(f'avia_{i}_estac_{j}_tempo_{k}_partiu_agora')
+                loga(aviao_decolou)
+                modelo.Add(sum([X[i][j][k-1], X[i][j][k].Not()]) == 2).OnlyEnforceIf(aviao_decolou)
+                modelo.Add(sum([X[i][j][k-1], X[i][j][k].Not()]) != 2).OnlyEnforceIf(aviao_decolou.Not())
+
 resolve(solucionador, modelo, X)
