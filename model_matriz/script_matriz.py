@@ -58,10 +58,29 @@ for i in range(total_avioes):
 for i in range(total_avioes):
     for j in range(total_estacionamentos):
         for k in range(total_tempo):
-            if k > 0:
-                aviao_decolou = modelo.NewBoolVar(f'avia_{i}_estac_{j}_tempo_{k}_partiu_agora')
+            if k > 0 and k < total_tempo - 1:
+                aviao_decolou = modelo.NewBoolVar(f'aviao_{i}_estac_{j}_tempo_{k}_partiu_agora')
                 loga(aviao_decolou)
+                # Indica que o avião decolou!!
                 modelo.Add(sum([X[i][j][k-1], X[i][j][k].Not()]) == 2).OnlyEnforceIf(aviao_decolou)
+                # Indica que o avião NÃO decolou!!
                 modelo.Add(sum([X[i][j][k-1], X[i][j][k].Not()]) != 2).OnlyEnforceIf(aviao_decolou.Not())
+
+                # Se o avião decolou
+                for futuro in range(k + 1, total_tempo):
+                    # Se o avião decolou ele não volta mais
+                    modelo.AddImplication(aviao_decolou, X[i][j][futuro].Not())
+            if k < total_tempo - 1:
+                aviao_pousou = modelo.NewBoolVar(f'aviao_{i}_estac_{j}_tempo_{k}_pousou_agora')
+                loga(aviao_pousou)
+                # Indica que o avião pousou!!
+                modelo.Add(sum([X[i][j][k+1], X[i][j][k].Not()]) == 2).OnlyEnforceIf(aviao_pousou)
+                # Indica que o avião NÃO pousou!!
+                modelo.Add(sum([X[i][j][k+1], X[i][j][k].Not()]) != 2).OnlyEnforceIf(aviao_pousou.Not())
+
+                for passado in range(0, k-1):
+                    modelo.AddImplication(aviao_pousou, X[i][j][passado].Not())
+
+
 
 resolve(solucionador, modelo, X)
