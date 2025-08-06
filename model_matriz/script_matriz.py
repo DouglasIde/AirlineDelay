@@ -9,6 +9,7 @@ total_avioes = 3
 total_estacionamentos = 3
 total_tempo = 5
 
+momento_chegada = [1, 2, 0]
 var_a_logar = []
 
 X = [[[modelo.NewBoolVar(f'aviao_{i}_estacionamento_{j}_tempo_{k}')
@@ -81,6 +82,18 @@ for i in range(total_avioes):
                 for passado in range(0, k-1):
                     modelo.AddImplication(aviao_pousou, X[i][j][passado].Not())
 
+# Garantir que o avião não chegue antes do tempo exigido
+for i in range(total_avioes):
+    chegada_aviao = momento_chegada[i]
+    for j in range(total_estacionamentos):
+        for k in range(chegada_aviao):
+            modelo.Add(X[i][j][k] == 0)
+
+# Garantir que o avião Chegue na hora que tem que chegar
+for i in range(total_avioes):
+    chegada_aviao = momento_chegada[i]
+    todos_estacionamentos = [X[i][j][chegada_aviao] for j in range(total_estacionamentos)]
+    modelo.Add(sum(todos_estacionamentos) == 1)
 
 
 resolve(solucionador, modelo, X)
