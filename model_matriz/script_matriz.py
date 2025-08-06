@@ -10,6 +10,7 @@ total_estacionamentos = 3
 total_tempo = 5
 
 momento_chegada = [1, 2, 0]
+tempo_duracao = [3, 3, 2]
 var_a_logar = []
 
 X = [[[modelo.NewBoolVar(f'aviao_{i}_estacionamento_{j}_tempo_{k}')
@@ -36,7 +37,7 @@ for j in range(total_estacionamentos):
 # O avião I tem que ficar no minimo 3 janelas de tempo em Qualquer Estacionamento J
 for i in range(total_avioes):
     tudo_aviao = [X[i][j][k] for j in range(total_estacionamentos) for k in range(total_tempo)]
-    modelo.Add(sum(tudo_aviao) >= 3)
+    modelo.Add(sum(tudo_aviao) == tempo_duracao[i])
 
 # [RESTRIÇÃO] Se o avião I ocupou o estacionamento J em algum momento
 for i in range(total_avioes):
